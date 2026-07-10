@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>网页视觉原型预览｜主线重构版</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css?v=mainline-5">
+</head>
+<body data-page="index">
+  <header class="site-nav" aria-label="页面导航">
+    <a class="brand-mark" href="#top">动画生产方式可视化</a>
+    <nav>
+      <a href="#top">首页</a>
+      <a href="#timeline">技术阶段</a>
+      <a href="#migration">劳动迁移</a>
+      <a href="#division">人机分工</a>
+      <a href="#ai">AI八环节</a>
+      <a href="#jobs">岗位信号</a>
+      <a href="#summary">总结</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero-section">
+      <div class="hero-copy">
+        <p class="eyebrow">技术变迁下的中国动画生产方式</p>
+        <h1 id="home-title"></h1>
+        <p class="subtitle" id="home-subtitle"></p>
+        <div class="hero-claim">
+          <strong>研究问题</strong>
+          <span id="home-question"></span>
+        </div>
+        <p class="hero-conclusion" id="home-conclusion"></p>
+        <div class="hero-actions">
+          <a class="button primary" href="#timeline">从技术阶段开始</a>
+          <a class="button ghost" href="#migration">查看劳动迁移主图</a>
+        </div>
+        <div class="reading-spine" aria-label="页面阅读主线">
+          <span>技术与表现</span>
+          <i></i>
+          <span>劳动迁移</span>
+          <i></i>
+          <span>人机分工</span>
+          <i></i>
+          <span>现实旁证</span>
+        </div>
+        <div class="motion-origin" aria-label="运动幻觉的起点">
+          <span>首页引子</span>
+          <strong>运动幻觉的起点</strong>
+          <p id="home-origin"></p>
+        </div>
+      </div>
+      <figure class="hero-production-visual" aria-label="动画生产流程观察对象">
+        <img src="assets/现成图片/技术/节点四-三维动画工作流-Autodesk.jpeg" alt="动画制作流程参考图">
+        <figcaption>
+          <span>观察对象</span>
+          <strong>动画技术与生产劳动的双重变化</strong>
+          <p>第一层观察动画怎样被制作和呈现。第二层比较技术接手了什么，以及人的工作重心怎样变化。</p>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="section-panel" id="timeline">
+      <div class="section-heading">
+        <p class="eyebrow">第一层 · 技术阶段与动画表现</p>
+        <h2>动画怎样被制作，又怎样呈现在银幕与屏幕上</h2>
+        <p>这一层只观察技术媒介、生产载体、视觉风格和影像效果。点击节点后，当前阶段会在时间轴内展开。</p>
+      </div>
+      <div class="timeline-layout">
+        <div class="timeline-track" id="stage-timeline-root"></div>
+      </div>
+    </section>
+
+    <section class="section-panel migration-zone" id="migration">
+      <div class="section-heading">
+        <p class="eyebrow">两层叙事的连接点</p>
+        <h2>技术接手了什么？人转向了什么？</h2>
+        <p>五个阶段使用同一组问题进行横向比较。图中只表示劳动内容的变化，不表示精确人数或替代比例。</p>
+      </div>
+      <div id="labor-migration-root"></div>
+    </section>
+
+    <section class="section-panel division-zone" id="division">
+      <div class="section-heading">
+        <p class="eyebrow">第二层 · 劳动迁移与人机分工</p>
+        <h2>回到五个阶段，重新理解动画生产中的分工</h2>
+        <p>这一次沿用同一条时间轴，集中观察技术接手的劳动、人仍负责的工作、人的新工作重心和生产组织变化。</p>
+      </div>
+      <div id="division-timeline-root"></div>
+    </section>
+
+    <section class="section-panel ai-zone" id="ai">
+      <div class="section-heading compact-heading">
+        <p class="eyebrow">劳动迁移的最新阶段</p>
+        <h2>AI进入八个动画制作环节</h2>
+        <p>前四个阶段中，技术主要逐步接手工具性、机械性和流程性劳动。进入AI阶段后，技术开始同时进入剧本、分镜、角色、场景、动作、声音、后期和宣发等综合环节。人的角色进一步转向筛选、修正、风格控制和最终判断。</p>
+      </div>
+      <div class="metric-overview">
+        <div>
+          <span class="metric-number">100%</span>
+          <strong>AI流程覆盖率</strong>
+          <p>该指标表示AI对动画制作流程的可介入范围。它不等于AI替代率、自动化比例或市场占比。</p>
+        </div>
+        <div>
+          <span class="metric-number">3.25 / 5</span>
+          <strong>AI平均影响程度</strong>
+          <p>多数环节仍处于辅助、协同和人工修正阶段。</p>
+        </div>
+      </div>
+      <div class="ai-grid" id="ai-grid"></div>
+    </section>
+
+    <section class="section-panel job-signal-zone" id="jobs">
+      <div class="section-heading">
+        <p class="eyebrow">现实旁证</p>
+        <h2>岗位语言中的现实回声</h2>
+        <p>招聘信息中的软件、管线、AI和相关技能要求，只能作为现实变化的旁证。它可以帮助说明技术变迁正在影响岗位能力结构，但不能直接等同于整个动画产业全貌。</p>
+      </div>
+      <div id="job-signal-root"></div>
+    </section>
+
+    <section class="section-panel summary-zone" id="summary">
+      <div class="section-heading">
+        <p class="eyebrow">回到研究问题</p>
+        <h2>技术变迁如何重新分配动画劳动</h2>
+      </div>
+      <div class="summary-points">
+        <article><span>01</span><strong>技术接手执行劳动</strong><p>工具、软件、管线和AI不断接手重复性、机械性和高成本劳动。</p></article>
+        <article><span>02</span><strong>人的重心向上移动</strong><p>人的工作逐渐从具体执行转向判断、协调、审美、控制和最终决策。</p></article>
+        <article><span>03</span><strong>AI放大协同趋势</strong><p>AI扩大了技术的可介入范围，但没有取消人的叙事、审美和责任判断。</p></article>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="page-footer">
+    <p>本页面用于展示技术变迁如何改变中国动画生产流程和人机分工。</p>
+  </footer>
+
+  <div class="case-modal" id="case-modal" hidden>
+    <div class="case-modal-backdrop" data-close-case></div>
+    <article class="case-modal-panel" role="dialog" aria-modal="true" aria-labelledby="case-modal-title">
+      <button class="case-modal-close" type="button" data-close-case aria-label="关闭案例介绍">×</button>
+      <div id="case-modal-content"></div>
+    </article>
+  </div>
+
+  <aside class="matrix-detail-drawer" id="matrix-detail-drawer" aria-hidden="true">
+    <button class="matrix-drawer-backdrop" type="button" data-close-matrix-drawer aria-label="关闭制作环节详情"></button>
+    <article class="matrix-drawer-panel" role="dialog" aria-modal="true" aria-labelledby="matrix-drawer-title">
+      <header class="matrix-drawer-header">
+        <div>
+          <p id="matrix-drawer-group"></p>
+          <h2 id="matrix-drawer-title"></h2>
+        </div>
+        <button class="matrix-drawer-close" type="button" data-close-matrix-drawer aria-label="关闭制作环节详情">×</button>
+      </header>
+      <div id="matrix-drawer-content"></div>
+    </article>
+  </aside>
+
+  <script src="matrix-data.js?v=mainline-5"></script>
+  <script src="data.js?v=mainline-5"></script>
+  <script src="app.js?v=mainline-5"></script>
+</body>
+</html>

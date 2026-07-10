@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>组件展示页｜动画生产方式可视化</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css?v=mainline-5">
+</head>
+<body data-page="components">
+  <header class="site-nav">
+    <a class="brand-mark" href="index.html">返回完整原型</a>
+    <nav>
+      <a href="#hero-component">首页标题</a>
+      <a href="#timeline-component">技术阶段</a>
+      <a href="#migration-component">劳动迁移</a>
+      <a href="#division-component">人机分工</a>
+      <a href="#case-component">案例卡片</a>
+      <a href="#ai-component">AI指标</a>
+    </nav>
+  </header>
+
+  <main class="component-page">
+    <section class="component-intro">
+      <p class="eyebrow">组件展示页</p>
+      <h1>网页视觉组件检查</h1>
+      <p>本页使用真实交接数据，单独展示首页标题、技术表现时间轴、劳动迁移总图、人机分工卡片、案例卡片和AI指标卡片。</p>
+    </section>
+
+    <section class="component-section" id="hero-component">
+      <h2>首页标题组件</h2>
+      <div class="component-surface" id="component-hero"></div>
+    </section>
+
+    <section class="component-section" id="timeline-component">
+      <h2>技术阶段展开组件</h2>
+      <div class="component-surface" id="component-stage"></div>
+    </section>
+
+    <section class="component-section" id="migration-component">
+      <h2>劳动迁移总图组件</h2>
+      <div class="component-surface" id="component-migration"></div>
+    </section>
+
+    <section class="component-section" id="division-component">
+      <h2>人机分工阶段组件</h2>
+      <div class="component-surface" id="component-division"></div>
+    </section>
+
+    <section class="component-section" id="case-component">
+      <h2>案例卡片普通样式与特殊样式</h2>
+      <div class="case-grid component-cases" id="component-cases"></div>
+    </section>
+
+    <section class="component-section" id="ai-component">
+      <h2>AI指标卡片与评分条</h2>
+      <div class="ai-grid component-ai" id="component-ai"></div>
+    </section>
+
+  </main>
+
+  <script src="matrix-data.js?v=mainline-5"></script>
+  <script src="data.js?v=mainline-5"></script>
+  <script src="app.js?v=mainline-5"></script>
+</body>
+</html>
