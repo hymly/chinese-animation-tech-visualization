@@ -867,46 +867,101 @@ function renderAi(target = qs("#ai-grid"), rows) {
 }
 
 function renderJobSignals(target = qs("#job-signal-root")) {
-  if (!target || !DATA.jobSignals) return;
-  const data = DATA.jobSignals;
-  const keywordMax = Math.max(...data.keywords.map((item) => Number(item["出现次数"]) || 0), 1);
+  const data = window.JOB_SIGNAL_DATA;
+  if (!target || !data) return;
 
-  const keywordBars = data.keywords.slice(0, 10).map((item) => {
-    const total = Number(item["出现次数"]) || 0;
-    const ai = Number(item["AI岗位出现次数"]) || 0;
-    const traditional = Number(item["传统岗位出现次数"]) || 0;
-    const aiWidth = total ? Math.round(ai / total * 100) : 0;
-    const traditionalWidth = total ? Math.round(traditional / total * 100) : 0;
-    return '<div class="job-keyword-row">' +
-      '<div class="job-keyword-head"><strong>' + escapeHtml(item["关键词"]) + '</strong><span>' + total + '次</span></div>' +
-      '<div class="job-stacked-bar" style="--bar-width:' + Math.round(total / keywordMax * 100) + '%">' +
-        '<i class="ai-part" style="width:' + aiWidth + '%"></i>' +
-        '<i class="traditional-part" style="width:' + traditionalWidth + '%"></i>' +
+  const meta = data["元数据"];
+  const roleMax = Math.max(...data["新岗位类型"].map((item) => Number(item["样本数"]) || 0), 1);
+  const percent = (value) => Math.round(Number(value || 0) * 100);
+
+  const structureSteps = data["岗位结构"].map((item, index) =>
+    '<div class="job-structure-step step-' + (index + 1) + '">' +
+      '<span>0' + (index + 1) + '</span>' +
+      '<div><strong>' + escapeHtml(item["岗位结构类型"]) + '</strong><p>' + escapeHtml(item["解释"]) + '</p></div>' +
+      '<em>' + escapeHtml(item["样本数"]) + '<small>条</small></em>' +
+    '</div>'
+  ).join("");
+
+  const roleBars = data["新岗位类型"].map((item) => {
+    const count = Number(item["样本数"]) || 0;
+    const width = Math.round(count / roleMax * 100);
+    return '<div class="job-role-row">' +
+      '<div class="job-role-label"><span>' + escapeHtml(item["新岗位类型"]) + '</span><strong>' + count + '</strong></div>' +
+      '<div class="job-role-track"><i style="width:' + width + '%"></i></div>' +
+    '</div>';
+  }).join("");
+
+  const taskColumns = Object.entries(data["任务迁移"]).map(([side, items], index) => {
+    const rows = items.map((item) => {
+      const value = percent(item["提及率"]);
+      return '<div class="job-task-row">' +
+        '<div><span>' + escapeHtml(item["任务类别"]) + '</span><strong>' + escapeHtml(item["提及岗位数"]) + '/41</strong></div>' +
+        '<div class="job-task-track"><i style="width:' + value + '%"></i></div>' +
+      '</div>';
+    }).join("");
+    return '<section class="job-task-column task-side-' + (index + 1) + '">' +
+      '<div class="job-task-title"><span>' + (index === 0 ? '工具侧' : '人工侧') + '</span><strong>' + escapeHtml(side) + '</strong></div>' +
+      rows +
+    '</section>';
+  }).join("");
+
+  const salaryMax = 15;
+  const salaryRows = data["薪资比较"].map((item) => {
+    const p25 = Number(item["P25"]);
+    const median = Number(item["中位数"]);
+    const p75 = Number(item["P75"]);
+    const left = p25 / salaryMax * 100;
+    const width = (p75 - p25) / salaryMax * 100;
+    const marker = (median - p25) / Math.max(p75 - p25, 0.01) * 100;
+    return '<div class="job-salary-row">' +
+      '<div class="job-salary-label"><strong>' + escapeHtml(item["岗位组"]) + '</strong><span>n=' + escapeHtml(item["可比月薪样本数"]) + '</span></div>' +
+      '<div class="job-salary-scale">' +
+        '<i class="job-salary-range" style="left:' + left.toFixed(2) + '%;width:' + width.toFixed(2) + '%"><b style="left:' + marker.toFixed(2) + '%"></b></i>' +
+      '</div>' +
+      '<p><span>' + p25.toFixed(2) + '</span><strong>' + median.toFixed(2) + 'K</strong><span>' + p75.toFixed(2) + '</span></p>' +
+    '</div>';
+  }).join("");
+
+  const capabilityRows = data["能力矩阵"].map((item) => {
+    const aiValue = percent(item["AI相关岗位"]);
+    const traditionalValue = percent(item["传统岗位基线"]);
+    return '<div class="job-capability-row">' +
+      '<span>' + escapeHtml(item["能力类别"]) + '</span>' +
+      '<div class="job-capability-pair">' +
+        '<i class="capability-ai" style="width:' + aiValue + '%"><b>' + aiValue + '%</b></i>' +
+        '<i class="capability-traditional" style="width:' + traditionalValue + '%"><b>' + traditionalValue + '%</b></i>' +
       '</div>' +
     '</div>';
   }).join("");
 
-  const comparisons = data.comparisons.map((item) => '<article class="job-compare-card">' +
-    '<h3>' + escapeHtml(item["类别"]) + '</h3>' +
-    '<div class="keyword-list">' + item["关键词"].map((word) => '<span>' + escapeHtml(word) + '</span>').join("") + '</div>' +
-    '<p>' + escapeHtml(item["结论"]) + '</p>' +
-  '</article>').join("");
-
-  target.innerHTML = '<div class="job-echo-layout">' +
-    '<article class="job-echo-summary">' +
-      '<div><p class="eyebrow">小样本旁证</p><h3>' + escapeHtml(data.summary["标题"]) + '</h3><p>' + escapeHtml(data.summary["说明"]) + '</p></div>' +
-      '<div class="job-echo-meta"><strong>' + escapeHtml(data.summary["样本数"]) + '</strong><span>条公开岗位样本</span><em>' + escapeHtml(data.summary["采样时间"]) + '</em></div>' +
-    '</article>' +
-    '<div class="job-echo-grid">' +
-      '<article class="job-keyword-panel">' +
-        '<div class="job-chart-title"><h3>反复出现的技术能力</h3><span><i class="legend-tool"></i>AI相关岗位 <i class="legend-human"></i>传统岗位</span></div>' +
-        keywordBars +
+  target.innerHTML = '<div class="job-evidence-layout">' +
+    '<section class="job-structure-band" aria-label="当前样本中的岗位结构">' +
+      '<div class="job-structure-meta"><strong>' + escapeHtml(meta["样本数"]) + '</strong><div><span>条公开岗位样本</span><em>' + escapeHtml(meta["采样时间"]) + ' 采集</em></div></div>' +
+      '<div class="job-structure-spectrum">' + structureSteps + '</div>' +
+    '</section>' +
+    '<div class="job-evidence-grid">' +
+      '<article class="job-evidence-panel job-role-panel">' +
+        '<header><span>01 · 岗位名称</span><h3>新岗位类型已经出现</h3><p>仅统计38条岗位名称直接出现AI或AIGC的样本。</p></header>' +
+        '<div class="job-role-bars">' + roleBars + '</div>' +
       '</article>' +
-      '<div class="job-capability-stack">' + comparisons +
-        '<article class="job-human-value"><span>仍然由人承担的能力</span><strong>理解脚本与分镜、筛选画面、修正风格、控制质量、协同管线</strong><p>' + escapeHtml(data.summary["主线结论"]) + '</p></article>' +
-      '</div>' +
+      '<article class="job-evidence-panel job-task-panel">' +
+        '<header><span>02 · 责任迁移</span><h3>工具接手生成，人继续判断</h3><p>41条AI相关岗位采用多标签编码，同一岗位可以命中多个任务。</p></header>' +
+        '<div class="job-task-columns">' + taskColumns + '</div>' +
+      '</article>' +
+      '<article class="job-evidence-panel job-market-panel">' +
+        '<header><span>03 · 薪资与能力</span><h3>岗位要求正在重新组合</h3></header>' +
+        '<section class="job-salary-block">' +
+          '<div class="job-subheading"><strong>月薪中点分布</strong><span>P25 · 中位数 · P75，单位：千元/月</span></div>' +
+          salaryRows +
+          '<p class="job-salary-caveat">薪资未控制城市、经验和岗位层级，只能描述当前样本。</p>' +
+        '</section>' +
+        '<section class="job-capability-block">' +
+          '<div class="job-subheading"><strong>能力提及率</strong><span><i class="legend-ai"></i>AI相关岗位 <i class="legend-traditional"></i>传统岗位</span></div>' +
+          capabilityRows +
+        '</section>' +
+      '</article>' +
     '</div>' +
-    '<p class="job-caution">' + escapeHtml(data.summary["口径说明"]) + '</p>' +
+    '<footer class="job-evidence-note"><strong>证据边界</strong><span>这些数据能说明AI已经进入企业招聘语言。</span><span>样本不能推断行业占比、薪资因果或被替代的人工岗位数。</span></footer>' +
   '</div>';
 }
 
