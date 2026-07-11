@@ -872,7 +872,6 @@ function renderJobSignals(target = qs("#job-signal-root")) {
 
   const meta = data["元数据"];
   const roleMax = Math.max(...data["新岗位类型"].map((item) => Number(item["样本数"]) || 0), 1);
-  const toolMax = Math.max(...data["工具提及"].map((item) => Number(item["提及岗位数"]) || 0), 1);
   const aiRelatedTotal = Number(meta["AI相关岗位数"]) || 1;
   const percent = (value) => Math.round(Number(value || 0) * 100);
 
@@ -907,29 +906,37 @@ function renderJobSignals(target = qs("#job-signal-root")) {
     '</section>';
   }).join("");
 
-  const salaryMax = Math.max(...data["薪资比较"].map((item) => Number(item["P75"]) || 0), 15) * 1.05;
-  const salaryRows = data["薪资比较"].map((item, index) => {
-    const p25 = Number(item["P25"]);
-    const median = Number(item["中位数"]);
-    const p75 = Number(item["P75"]);
-    const left = p25 / salaryMax * 100;
-    const width = (p75 - p25) / salaryMax * 100;
-    const marker = (median - p25) / Math.max(p75 - p25, 0.01) * 100;
-    return '<div class="job-salary-row salary-row-' + (index + 1) + '">' +
-      '<div class="job-salary-label"><strong>' + escapeHtml(item["岗位组"]) + '</strong><span>n=' + escapeHtml(item["可比月薪样本数"]) + '</span></div>' +
-      '<div class="job-salary-scale">' +
-        '<i class="job-salary-range" style="left:' + left.toFixed(2) + '%;width:' + width.toFixed(2) + '%"><b style="left:' + marker.toFixed(2) + '%"></b></i>' +
-      '</div>' +
-      '<p><span>' + p25.toFixed(2) + '</span><strong>' + median.toFixed(2) + 'K</strong><span>' + p75.toFixed(2) + '</span></p>' +
+  const toolChips = data["工具提及"].map((item) => {
+    const count = Number(item["提及岗位数"]) || 0;
+    return '<span><b>' + escapeHtml(item["工具"]) + '</b><em>' + count + '</em></span>';
+  }).join("");
+
+  const salaryGroupKeys = ["显性AI岗位", "传统名称+AI能力", "传统岗位基线"];
+  const salaryGroupLabels = ["显性AI", "传统+AI", "传统基线"];
+  const experienceHeader = salaryGroupLabels.map((label, index) =>
+    '<span class="salary-group-' + (index + 1) + '">' + label + '</span>'
+  ).join("");
+  const experienceRows = data["经验分层薪资"].map((item) => {
+    const cells = salaryGroupKeys.map((key, index) => {
+      const value = item[key];
+      return '<div class="job-experience-cell salary-group-' + (index + 1) + '">' +
+        '<strong>' + Number(value["中位数"]).toFixed(2) + 'K</strong>' +
+        '<small>n=' + escapeHtml(value["样本数"]) + '</small>' +
+      '</div>';
+    }).join("");
+    return '<div class="job-experience-row">' +
+      '<div class="job-experience-label"><strong>' + escapeHtml(item["经验层级"]) + '</strong><span>' + escapeHtml(item["分组说明"]) + '</span></div>' +
+      cells +
     '</div>';
   }).join("");
 
-  const toolRows = data["工具提及"].map((item) => {
-    const count = Number(item["提及岗位数"]) || 0;
-    const width = Math.max(4, Math.round(count / toolMax * 100));
-    return '<div class="job-tool-row">' +
-      '<span>' + escapeHtml(item["工具"]) + '</span>' +
-      '<div class="job-tool-track"><i style="width:' + width + '%"></i><b>' + count + '</b></div>' +
+  const aiFamilySalaryMax = Math.max(...data["显性AI岗位薪资"].map((item) => Number(item["中位数"]) || 0), 1);
+  const aiFamilySalaryRows = data["显性AI岗位薪资"].map((item) => {
+    const median = Number(item["中位数"]) || 0;
+    const width = Math.max(4, Math.round(median / aiFamilySalaryMax * 100));
+    return '<div class="job-family-salary-row">' +
+      '<div><span>' + escapeHtml(item["岗位族"]) + '</span><small>n=' + escapeHtml(item["可比样本数"]) + '</small></div>' +
+      '<div class="job-family-salary-track"><i style="width:' + width + '%"></i><b>' + median.toFixed(2) + 'K</b></div>' +
     '</div>';
   }).join("");
 
@@ -946,25 +953,26 @@ function renderJobSignals(target = qs("#job-signal-root")) {
       '<article class="job-evidence-panel job-role-panel">' +
         '<header><span>01 · 岗位名称</span><h3>新岗位类型已经出现</h3><p>以下分类来自' + escapeHtml(meta["显性AI岗位数"]) + '条岗位名称直接出现AI或AIGC的样本。</p></header>' +
         '<div class="job-role-bars">' + roleBars + '</div>' +
+        '<section class="job-role-tools"><div><strong>招聘中共现的工具</strong><span>提及岗位数</span></div><p>' + toolChips + '</p></section>' +
       '</article>' +
       '<article class="job-evidence-panel job-task-panel">' +
         '<header><span>02 · 责任迁移</span><h3>工具接手生成，人继续判断</h3><p>' + escapeHtml(meta["AI相关岗位数"]) + '条AI相关岗位采用多标签编码，同一岗位可以命中多个任务。</p></header>' +
         '<div class="job-task-columns">' + taskColumns + '</div>' +
       '</article>' +
       '<article class="job-evidence-panel job-market-panel">' +
-        '<header><span>03 · 薪资与工具</span><h3>生成工具进入传统制作链</h3></header>' +
-        '<section class="job-salary-block">' +
-          '<div class="job-subheading"><strong>月薪中点分布</strong><span>P25 · 中位数 · P75，单位：千元/月</span></div>' +
-          salaryRows +
-          '<p class="job-salary-caveat">薪资未控制城市、经验和岗位层级，不能解释为AI技能的因果溢价。</p>' +
+        '<header><span>03 · 薪资结构</span><h3>先分经验与责任层级，再看薪资</h3><p>直接比较岗位名称会混入经验和责任差异，因此改用分层结果。</p></header>' +
+        '<section class="job-experience-block">' +
+          '<div class="job-subheading"><strong>按经验门槛比较</strong><span>月薪中点中位数</span></div>' +
+          '<div class="job-experience-matrix"><div class="job-experience-header"><span>经验门槛</span>' + experienceHeader + '</div>' + experienceRows + '</div>' +
+          '<p class="job-salary-caveat">经验字段缺失的岗位不进入分层；同层级差距缩小，但岗位类型仍不完全相同。</p>' +
         '</section>' +
-        '<section class="job-tool-block">' +
-          '<div class="job-subheading"><strong>高频工具组合</strong><span>提及岗位数</span></div>' +
-          toolRows +
+        '<section class="job-family-salary-block">' +
+          '<div class="job-subheading"><strong>显性AI岗位内部分化</strong><span>月薪中位数</span></div>' +
+          aiFamilySalaryRows +
         '</section>' +
       '</article>' +
     '</div>' +
-    '<footer class="job-evidence-note"><strong>证据边界</strong><span>8份行业报告和7条海外官方岗位用于背景参照。</span><span>本模块能说明AI已经进入企业招聘语言，不能推断行业占比、薪资因果或岗位替代数量。</span></footer>' +
+    '<footer class="job-evidence-note"><strong>证据边界</strong><span>显性AI岗位多为生成执行和漫剧制作，传统组含较多资深三维岗位。</span><span>薪资差异反映样本岗位构成，不能解释为AI技能导致降薪。</span></footer>' +
   '</div>';
 }
 
