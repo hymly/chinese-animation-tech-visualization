@@ -17,6 +17,185 @@
   --shadow: 0 18px 50px rgba(0, 0, 0, 0.24);
 }
 
+/* Evidence-first review adjustments */
+.stage-scope-note {
+  display: inline-flex;
+  max-width: 980px;
+  margin-top: 10px !important;
+  padding: 7px 10px;
+  color: #c9d4df !important;
+  border-left: 3px solid rgba(122, 167, 255, 0.72);
+  background: rgba(122, 167, 255, 0.08);
+  font-size: 13px !important;
+  line-height: 1.45;
+}
+
+.migration-view-switch {
+  display: inline-grid;
+  grid-template-columns: repeat(2, minmax(150px, 1fr));
+  gap: 4px;
+  margin: 0 0 14px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  background: rgba(7, 12, 17, 0.72);
+}
+
+.migration-view-switch button {
+  min-height: 34px;
+  padding: 7px 14px;
+  border: 0;
+  border-radius: 4px;
+  color: var(--muted);
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: color .18s ease, background .18s ease;
+}
+
+.migration-view-switch button.is-active {
+  color: #07110f;
+  background: var(--accent-1);
+}
+
+#labor-migration-root[hidden],
+#migration-evidence-root[hidden] {
+  display: none !important;
+}
+
+.migration-evidence-shell {
+  display: grid;
+  gap: 10px;
+}
+
+.migration-evidence-node-row {
+  margin-bottom: 0;
+}
+
+#migration-evidence-root .technology-matrix-panel {
+  min-height: 600px;
+}
+
+.case-evidence-box {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid rgba(84, 214, 199, 0.24);
+  border-radius: 6px;
+  background: rgba(84, 214, 199, 0.06);
+}
+
+.case-evidence-box > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.case-evidence-box > div:first-child span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.case-evidence-box > div:first-child strong {
+  color: var(--accent-1);
+  font-size: 12px;
+}
+
+.case-evidence-box p {
+  margin: 0;
+  color: #cbd6e1;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.case-evidence-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.case-evidence-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 5px 8px;
+  color: #d8f9f4;
+  border: 1px solid rgba(84, 214, 199, 0.2);
+  border-radius: 4px;
+  background: rgba(84, 214, 199, 0.08);
+  font-size: 11px;
+  text-decoration: none;
+}
+
+.case-evidence-links a:hover {
+  border-color: rgba(84, 214, 199, 0.52);
+  background: rgba(84, 214, 199, 0.14);
+}
+
+.metric-method-note {
+  margin: 8px 0 14px;
+  color: #aebbc8;
+  font-size: 12px;
+  text-align: right;
+}
+
+.ai-detail {
+  width: min(680px, calc(100vw - 32px));
+  max-height: min(640px, calc(100vh - 80px));
+}
+
+.ai-evidence-block {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid rgba(183, 140, 255, 0.25);
+  border-radius: 6px;
+  background: rgba(183, 140, 255, 0.07);
+}
+
+.ai-evidence-block > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ai-evidence-block > div:first-child span,
+.ai-evidence-block > div:first-child strong {
+  font-size: 12px;
+}
+
+.ai-evidence-block > div:first-child span {
+  color: var(--muted);
+}
+
+.ai-evidence-block > div:first-child strong {
+  color: #d9c5ff;
+}
+
+.ai-evidence-block p {
+  margin: 0;
+  font-size: 12px;
+}
+
+.ai-evidence-block ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 7px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ai-evidence-block a {
+  color: #d9c5ff;
+  font-size: 11px;
+}
+
 * { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; }
@@ -6212,4 +6391,45 @@ h3 { font-size: 20px; }
     padding-top: 54px;
     padding-bottom: 64px;
   }
+}
+
+@media (min-width: 1021px) {
+  .ai-detail {
+    width: min(680px, calc(100vw - 64px));
+    max-height: min(640px, calc(100vh - 80px));
+  }
+
+  #migration-evidence-root .technology-matrix-panel {
+    min-height: 600px;
+  }
+}
+
+.node-visual figcaption {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.node-visual figcaption span {
+  min-width: 0;
+}
+
+.node-visual figcaption a {
+  flex: 0 0 auto;
+  color: var(--accent-1);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.node-case-thumb.two-dimensional,
+.stage-case-thumb.two-dimensional,
+.case-card.two-dimensional,
+.case-modal-layout.two-dimensional {
+  border-color: rgba(122, 167, 255, 0.72);
+}
+
+.two-dimensional .special-label {
+  color: #07101f;
+  background: var(--accent-3);
 }

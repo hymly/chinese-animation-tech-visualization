@@ -49,6 +49,7 @@ const MIGRATION_STEPS = [
 ];
 let selectedNode = DATA.timeline[0]?.["节点"] || "节点一";
 let selectedCaseFilter = "全部";
+let selectedMigrationView = "overview";
 
 function qs(selector, root = document) {
   return root.querySelector(selector);
@@ -97,7 +98,10 @@ function renderNodeThumb(nodeId) {
 function renderNodeVisualBlock(nodeId) {
   const visual = getNodeVisual(nodeId);
   if (!visual) return "";
-  return '<figure class="node-visual"><img src="' + escapeHtml(visual["图片路径"]) + '" alt="' + escapeHtml(visual["标题"]) + '"><figcaption>' + escapeHtml(visual["图片说明"]) + '</figcaption></figure>';
+  const source = visual["来源URL"]
+    ? '<a href="' + escapeHtml(visual["来源URL"]) + '" target="_blank" rel="noreferrer">查看图像来源</a>'
+    : "";
+  return '<figure class="node-visual"><img src="' + escapeHtml(visual["图片路径"]) + '" alt="' + escapeHtml(visual["标题"]) + '"><figcaption><span>' + escapeHtml(visual["图片说明"]) + '</span>' + source + '</figcaption></figure>';
 }
 
 function renderCaseVisual(row) {
@@ -108,9 +112,38 @@ function renderCaseVisual(row) {
 }
 
 function getCasesForNode(nodeId) {
-  return DATA.cases
+  const rows = DATA.cases
     .map((row, index) => ({ ...row, "__caseIndex": index }))
     .filter((row) => row["节点"] === nodeId);
+  if (nodeId === "节点五") {
+    const priority = [
+      "千秋诗颂",
+      "山海奇镜之劈波斩浪",
+      "The Dog & The Boy（犬と少年）",
+      "ツインズひなひま（Twins Hinahima）",
+      "Critterz（AI辅助动画长片项目）"
+    ];
+    rows.sort((left, right) => priority.indexOf(left["作品名"]) - priority.indexOf(right["作品名"]));
+  }
+  return rows;
+}
+
+function renderCaseEvidence(row) {
+  const evidence = DATA.caseEvidence?.[row["作品名"]];
+  const visual = getCaseVisual(row);
+  const sourceItems = evidence?.["来源"] || [];
+  const links = sourceItems.map((item) =>
+    '<a href="' + escapeHtml(item["URL"]) + '" target="_blank" rel="noreferrer">' + escapeHtml(item["名称"]) + '</a>'
+  ).join("");
+  const visualLink = visual?.["来源URL"]
+    ? '<a href="' + escapeHtml(visual["来源URL"]) + '" target="_blank" rel="noreferrer">图片来源：' + escapeHtml(visual["来源名称"] || "原始页面") + '</a>'
+    : "";
+  if (!evidence && !visualLink) return "";
+  return '<aside class="case-evidence-box">' +
+    '<div><span>证据适用性</span><strong>' + escapeHtml(evidence?.["适用性"] || "案例背景资料") + '</strong></div>' +
+    (evidence?.["说明"] ? '<p>' + escapeHtml(evidence["说明"]) + '</p>' : "") +
+    '<div class="case-evidence-links">' + links + visualLink + '</div>' +
+  '</aside>';
 }
 
 function renderCaseThumbImage(row) {
@@ -154,6 +187,7 @@ function openCaseModal(index) {
       renderKeywordList(row["技术关键词"]) +
       '<p>' + escapeHtml(row["说明"]) + '</p>' +
       '<span class="badge special-label">' + escapeHtml(specialLabel(row)) + '</span>' +
+      renderCaseEvidence(row) +
     '</div>' +
   '</div>';
   modal.hidden = false;
@@ -235,7 +269,7 @@ function renderMatrixProcessCard(step, index) {
 
 function renderMatrixTrend(activeId) {
   return '<div class="matrix-trend" aria-label="五阶段平均介入强度">' +
-    '<span>平均介入强度</span>' +
+    '<span>研究编码平均强度</span>' +
     '<div>' + MATRIX_DATA.nodes.map((node) =>
       '<i class="' + (node.id === activeId ? "is-active" : "") + '" style="--trend-color:' + NODE_COLORS[MATRIX_DATA.nodes.indexOf(node)] + ';--trend-height:' + Math.max(14, node.average / 5 * 100) + '%" title="' + escapeHtml(node.id + "：" + node.average.toFixed(2) + "分") + '"><b></b><small>' + escapeHtml(node.id) + '</small></i>'
     ).join("") + '</div>' +
@@ -275,7 +309,7 @@ function renderTechnologyMatrixPanel(node) {
     '<div class="matrix-process-grid">' + matrixNode.steps.map(renderMatrixProcessCard).join("") + '</div>' +
     '<div class="matrix-panel-footer">' +
       renderMatrixTrend(matrixNode.id) +
-      '<p>' + escapeHtml(matrixNode.explanation) + '</p>' +
+      '<p>' + escapeHtml(matrixNode.explanation) + ' 来源权威性与证据适用性分开判断；“部分证据”表示资料可追溯，但不能直接代表该历史阶段的全部中国动画生产。</p>' +
     '</div>' +
   '</article>';
 }
@@ -302,7 +336,7 @@ function openMatrixDrawer(stepIndex) {
   qs("#matrix-drawer-group").textContent = matrixNode.name + " · " + step.group;
   qs("#matrix-drawer-title").textContent = step.name;
   qs("#matrix-drawer-content").innerHTML =
-    '<div class="matrix-drawer-score"><strong>' + (step.score === null ? "未评分" : escapeHtml(step.score + " / 5")) + '</strong><span>技术介入强度</span><em class="matrix-evidence ' + matrixEvidenceClass(step.evidenceStatus) + '">' + escapeHtml(step.evidenceStatus) + '</em></div>' +
+    '<div class="matrix-drawer-score"><strong>' + (step.score === null ? "未评分" : escapeHtml(step.score + " / 5")) + '</strong><span>研究编码中的技术介入强度</span><em class="matrix-evidence ' + matrixEvidenceClass(step.evidenceStatus) + '">' + escapeHtml(step.evidenceStatus) + '</em></div>' +
     '<section><h3>本阶段技术</h3><p>' + escapeHtml(step.technology) + '</p></section>' +
     '<section><h3>技术怎样介入</h3><p>' + escapeHtml(step.intervention) + '</p></section>' +
     '<section class="is-tool"><h3>技术承担</h3><p>' + escapeHtml(step.technologyWork) + '</p></section>' +
@@ -362,19 +396,19 @@ function renderResponsibilityBand(nodeId) {
       '</div>' +
     '</div>' +
     '<div class="responsibility-direction">' +
-      '<span>执行劳动逐步交给技术</span><i></i><span>人的重心向判断与控制集中</span>' +
+      '<span>技术系统承担的任务增加</span><i></i><span>人工任务转向判断、修正与协调</span>' +
     '</div>' +
     '<div class="task-transfer-track">' + tasks + '</div>' +
     '<div class="responsibility-takeaway">' +
       '<span>阶段判断</span><p>' + escapeHtml(data["阶段结论"]) + '</p>' +
     '</div>' +
-    '<p class="responsibility-note">颜色表示任务的主要承担方式，不表示精确比例。</p>' +
+    '<p class="responsibility-note">这是基于流程资料的定性编码。颜色表示任务的主要承担方式，不表示人数、工时或替代比例。</p>' +
   '</article>';
 }
 
 function renderMigrationSummary(activeNode) {
   return '<div class="migration-summary" aria-label="五个阶段的责任迁移总览">' +
-    '<div class="migration-summary-title"><span>贯穿五个阶段的变化</span><strong>执行逐步技术化，人的工作逐步转向判断</strong></div>' +
+    '<div class="migration-summary-title"><span>五个节点中的共同变化</span><strong>部分执行任务由技术系统承担，人工责任重新分配</strong></div>' +
     '<div class="migration-step-row">' +
       MIGRATION_STEPS.map((step, index) => '<button type="button" class="migration-step ' + (step.node === activeNode ? "is-active" : "") + '" data-node="' + escapeHtml(step.node) + '" style="--node-color:' + nodeColor(step.node) + '">' +
         '<span>' + String(index + 1).padStart(2, "0") + '</span>' +
@@ -399,6 +433,7 @@ function renderInlineDetailPills(nodeId) {
 function specialCaseKind(row) {
   const text = [row["作品名"], row["标签"], row["说明"], row["案例类型"]].join(" ");
   if (/Critterz|长片工业实验/.test(text)) return "experimental";
+  if (/浪浪山小妖怪|二维动画延续/.test(text)) return "two-dimensional";
   return "";
 }
 
@@ -586,10 +621,16 @@ function renderStagePresentationPanel(node) {
 }
 
 function bindMainlineNodeControls(root) {
+  const withinMigration = Boolean(root?.closest?.("#migration"));
+  const alignMigration = () => qs("#migration")?.scrollIntoView({ block: "start", behavior: "instant" });
   qsa("[data-mainline-node]", root).forEach((button) => {
     button.addEventListener("click", () => {
       selectedNode = button.dataset.mainlineNode;
       renderMainlineState();
+      if (withinMigration) {
+        requestAnimationFrame(() => requestAnimationFrame(alignMigration));
+        window.setTimeout(alignMigration, 100);
+      }
     });
   });
 }
@@ -608,7 +649,7 @@ function renderStageTimeline(target) {
 function renderLaborMigration(target) {
   if (!target || !DATA.laborMigration) return;
   target.innerHTML = '<div class="labor-migration-chart" aria-label="五个阶段的动画劳动迁移总图">' +
-    '<div class="labor-migration-axis"><span>具体执行与重复劳动</span><i></i><strong>技术接手范围扩大</strong><i></i><span>判断、协调与控制</span></div>' +
+    '<div class="labor-migration-axis"><span>具体执行与重复劳动</span><i></i><strong>定性流程编码</strong><i></i><span>判断、修正与协调</span></div>' +
     '<div class="labor-migration-head"><span>阶段</span><span>技术工具</span><span>技术接手的劳动</span><span>人保留的劳动</span><span>人的新工作重心</span></div>' +
     '<div class="labor-migration-rows">' +
       DATA.laborMigration.map((row, index) => {
@@ -622,9 +663,42 @@ function renderLaborMigration(target) {
         '</article>';
       }).join("") +
     '</div>' +
-    '<div class="labor-migration-conclusion"><span>主线结论</span><p>技术接手的劳动从记录和拍摄辅助，逐步扩展到软件处理、复杂计算与生成式初稿。人的工作重心逐步转向审美判断、流程协调、风险控制和最终决策。</p></div>' +
+    '<div class="labor-migration-conclusion"><span>主线判断</span><p>在本项目选取的节点与案例中，技术承担的任务从记录和拍摄辅助扩展到软件处理、复杂计算与生成式初稿。人工责任呈现出向审美判断、流程协调、结果修正和最终决策转移的趋势。该图不表示行业人数或工时比例。</p></div>' +
   '</div>';
   bindMainlineNodeControls(target);
+}
+
+function renderMigrationEvidence(target) {
+  if (!target) return;
+  const node = getNode(selectedNode);
+  target.innerHTML = '<div class="migration-evidence-shell">' +
+    renderMainlineNodeRow("mainline-node-row migration-evidence-node-row") +
+    renderTechnologyMatrixPanel(node) +
+  '</div>';
+  bindMainlineNodeControls(target);
+  bindMatrixControls(target);
+  bindCaseEntryButtons(target);
+}
+
+function renderMigrationModule() {
+  const overview = qs("#labor-migration-root");
+  const evidence = qs("#migration-evidence-root");
+  qsa("[data-migration-view]").forEach((button) => {
+    const active = button.dataset.migrationView === selectedMigrationView;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-pressed", String(active));
+    button.onclick = () => {
+      selectedMigrationView = button.dataset.migrationView;
+      renderMigrationModule();
+      const alignMigration = () => qs("#migration")?.scrollIntoView({ block: "start", behavior: "instant" });
+      requestAnimationFrame(() => requestAnimationFrame(alignMigration));
+      window.setTimeout(alignMigration, 100);
+    };
+  });
+  if (overview) overview.hidden = selectedMigrationView !== "overview";
+  if (evidence) evidence.hidden = selectedMigrationView !== "evidence";
+  if (selectedMigrationView === "overview") renderLaborMigration(overview);
+  if (selectedMigrationView === "evidence") renderMigrationEvidence(evidence);
 }
 
 function renderDivisionCaseEvidence(nodeId) {
@@ -640,11 +714,11 @@ function renderDivisionPanel(node) {
   if (!row) return "";
   return '<article class="division-panel" style="--node-color:' + nodeColor(node["节点"]) + '">' +
     '<header><div><span>' + escapeHtml(node["节点"]) + '</span><h3>' + escapeHtml(node["节点名称"]) + '</h3><em>' + escapeHtml(node["年份范围"]) + '</em></div><p>' + escapeHtml(row["生产组织变化"]) + '</p></header>' +
-    '<div class="division-direction"><span>技术承担扩大</span><i></i><span>人的工作向判断与协同集中</span></div>' +
+    '<div class="division-direction"><span>技术承担方式变化</span><i></i><span>人工任务重新分配</span></div>' +
     '<div class="division-card-grid">' +
       '<article class="is-tool"><span>01 · 技术接手</span><strong>' + escapeHtml(row["技术接手的劳动"]) + '</strong><p>主要工具：' + escapeHtml(row["技术工具"]) + '</p></article>' +
       '<article class="is-human"><span>02 · 人仍负责</span><strong>' + escapeHtml(row["人保留的劳动"]) + '</strong><p>技术参与后，核心创作责任仍需要人工承担。</p></article>' +
-      '<article class="is-focus"><span>03 · 人的新重心</span><strong>' + escapeHtml(row["人的新工作重心"]) + '</strong><p>人的价值逐步集中到选择、判断、协调和控制。</p></article>' +
+      '<article class="is-focus"><span>03 · 人的新重心</span><strong>' + escapeHtml(row["人的新工作重心"]) + '</strong><p>人工任务更多集中在选择、判断、修正、协调和控制。</p></article>' +
       '<article class="is-organization"><span>04 · 生产组织</span><strong>' + escapeHtml(row["生产组织变化"]) + '</strong></article>' +
     '</div>' +
     renderDivisionCaseEvidence(node["节点"]) +
@@ -664,8 +738,7 @@ function renderDivisionTimeline(target) {
 
 function renderMainlineState() {
   renderStageTimeline(qs("#stage-timeline-root"));
-  renderLaborMigration(qs("#labor-migration-root"));
-  renderDivisionTimeline(qs("#division-timeline-root"));
+  renderMigrationModule();
 }
 
 function renderIndexTimelineState() {
@@ -697,6 +770,7 @@ function renderCaseCard(row) {
     renderKeywordList(row["技术关键词"]) +
     '<p>' + escapeHtml(row["说明"]) + '</p>' +
     '<span class="badge special-label">' + escapeHtml(specialLabel(row)) + '</span>' +
+    renderCaseEvidence(row) +
   '</article>';
 }
 
@@ -774,9 +848,9 @@ function renderMarketSparkline() {
 function renderNodeContextPanel(nodeId) {
   if (nodeId === "节点四") {
     return '<div class="node-context-panel market-context">' +
-      '<div><span class="tag">市场反馈背景</span><strong>国产动画票房关键年份</strong></div>' +
+      '<div><span class="tag">市场反馈背景</span><strong>5个关键年份（非连续序列）</strong></div>' +
       renderMarketSparkline() +
-      '<p>票房用于说明院线动画的市场反馈，不单独证明技术进步。</p>' +
+      '<p>票房只作市场反馈背景；TOP1占比用于提示头部作品集中度。不同年份的平台口径不完全一致。</p>' +
     '</div>';
   }
   if (nodeId === "节点五") {
@@ -813,6 +887,17 @@ function compactAiSummary(row) {
   return first.length > 24 ? first.slice(0, 24) + "..." : first;
 }
 
+function renderAiEvidence(row) {
+  const matrixName = row["制作环节"] === "动作生成" ? "动作制作" : row["制作环节"];
+  const evidence = getMatrixNode("节点五")?.steps?.find((step) => step.name === matrixName);
+  if (!evidence) return "";
+  return '<div class="ai-evidence-block">' +
+    '<div><span>研究编码</span><strong>' + escapeHtml(evidence.evidenceStatus) + ' · ' + escapeHtml(evidence.score === null ? "未评分" : evidence.score + " / 5") + '</strong></div>' +
+    '<p><strong>评分依据：</strong>' + escapeHtml(evidence.scoreBasis) + '</p>' +
+    '<div><strong>资料来源：</strong><ul>' + renderMatrixSources(evidence) + '</ul></div>' +
+  '</div>';
+}
+
 function renderAiCard(row, index) {
   const score = Number(row["影响程度评分"]) || 0;
   return '<article class="ai-card" style="--score:' + score + '">' +
@@ -828,6 +913,7 @@ function renderAiCard(row, index) {
       '<p><strong>人工仍需负责：</strong>' + escapeHtml(row["人工仍需负责"]) + '</p>' +
       '<p><strong>风险或限制：</strong>' + escapeHtml(row["风险或限制"]) + '</p>' +
       '<p><strong>代表案例：</strong>' + escapeHtml(row["代表案例"]) + '</p>' +
+      renderAiEvidence(row) +
     '</div>' +
   '</article>';
 }
@@ -919,9 +1005,10 @@ function renderJobSignals(target = qs("#job-signal-root")) {
   const experienceRows = data["经验分层薪资"].map((item) => {
     const cells = salaryGroupKeys.map((key, index) => {
       const value = item[key];
+      const sampleSize = Number(value["样本数"]) || 0;
       return '<div class="job-experience-cell salary-group-' + (index + 1) + '">' +
         '<strong>' + Number(value["中位数"]).toFixed(2) + 'K</strong>' +
-        '<small>n=' + escapeHtml(value["样本数"]) + '</small>' +
+        '<small>n=' + escapeHtml(value["样本数"]) + (sampleSize < 15 ? ' · 小样本' : '') + '</small>' +
       '</div>';
     }).join("");
     return '<div class="job-experience-row">' +
@@ -933,9 +1020,10 @@ function renderJobSignals(target = qs("#job-signal-root")) {
   const aiFamilySalaryMax = Math.max(...data["显性AI岗位薪资"].map((item) => Number(item["中位数"]) || 0), 1);
   const aiFamilySalaryRows = data["显性AI岗位薪资"].map((item) => {
     const median = Number(item["中位数"]) || 0;
+    const sampleSize = Number(item["可比样本数"]) || 0;
     const width = Math.max(4, Math.round(median / aiFamilySalaryMax * 100));
     return '<div class="job-family-salary-row">' +
-      '<div><span>' + escapeHtml(item["岗位族"]) + '</span><small>n=' + escapeHtml(item["可比样本数"]) + '</small></div>' +
+      '<div><span>' + escapeHtml(item["岗位族"]) + '</span><small>n=' + escapeHtml(item["可比样本数"]) + (sampleSize < 15 ? ' · 小样本' : '') + '</small></div>' +
       '<div class="job-family-salary-track"><i style="width:' + width + '%"></i><b>' + median.toFixed(2) + 'K</b></div>' +
     '</div>';
   }).join("");
@@ -972,7 +1060,7 @@ function renderJobSignals(target = qs("#job-signal-root")) {
         '</section>' +
       '</article>' +
     '</div>' +
-    '<footer class="job-evidence-note"><strong>证据边界</strong><span>显性AI岗位多为生成执行和漫剧制作，传统组含较多资深三维岗位。</span><span>薪资差异反映样本岗位构成，不能解释为AI技能导致降薪。</span></footer>' +
+    '<footer class="job-evidence-note"><strong>证据边界</strong><span>本页是固定关键词、固定页数的便利样本，不代表行业岗位占比或总体薪资。</span><span>显性AI岗位多为生成执行和漫剧制作，传统组含较多资深三维岗位；薪资差异不能解释为AI技能导致降薪。</span></footer>' +
   '</div>';
 }
 
@@ -989,9 +1077,12 @@ function alignInitialHash() {
   if (!window.location.hash) return;
   const target = document.querySelector(window.location.hash);
   if (!target) return;
-  const align = () => target.scrollIntoView({ block: "start" });
+  const align = () => target.scrollIntoView({ block: "start", behavior: "instant" });
   requestAnimationFrame(() => requestAnimationFrame(align));
-  window.addEventListener("load", align, { once: true });
+  window.addEventListener("load", () => {
+    align();
+    window.setTimeout(align, 240);
+  }, { once: true });
 }
 
 function renderIndexPage() {

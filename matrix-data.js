@@ -428,7 +428,7 @@ window.technologyMatrixData = {
     {
       "id": "T3",
       "name": "数字软件与无纸化生成",
-      "years": "1990年代至2010年代",
+      "years": "1990年代至今",
       "average": 2.75,
       "evidenceCoverage": 1,
       "explanation": "不同阶段公开资料密度不同。平均分必须与已评分环节数一起阅读。",
