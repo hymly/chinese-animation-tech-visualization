@@ -5297,6 +5297,16 @@ h3 { font-size: 20px; }
   color: var(--muted);
 }
 
+.job-structure-meta small {
+  display: block;
+  max-width: 150px;
+  margin-top: 5px;
+  color: #cbd7e3;
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
 .job-structure-spectrum {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -5566,10 +5576,14 @@ h3 { font-size: 20px; }
   bottom: 1px;
   min-width: 8px;
   border-radius: 4px;
+  background: var(--accent-5);
+}
+
+.salary-row-2 .job-salary-range {
   background: var(--accent-3);
 }
 
-.job-salary-row:nth-of-type(3) .job-salary-range {
+.salary-row-3 .job-salary-range {
   background: var(--accent-4);
 }
 
@@ -5601,6 +5615,59 @@ h3 { font-size: 20px; }
   color: var(--muted);
   font-size: 11px;
   line-height: 1.35;
+}
+
+.job-tool-block {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 14px;
+  padding-top: 10px;
+}
+
+.job-tool-block > .job-subheading {
+  grid-column: 1 / -1;
+  margin-bottom: 1px;
+}
+
+.job-tool-row {
+  display: grid;
+  grid-template-columns: minmax(72px, 0.9fr) minmax(54px, 1.1fr);
+  gap: 7px;
+  align-items: center;
+  min-width: 0;
+}
+
+.job-tool-row > span {
+  overflow: hidden;
+  color: #dfe7f0;
+  font-size: 10px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.job-tool-track {
+  position: relative;
+  height: 6px;
+  margin-right: 22px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.job-tool-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent-5), var(--accent-1));
+}
+
+.job-tool-track b {
+  position: absolute;
+  top: -5px;
+  left: calc(100% + 5px);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 500;
 }
 
 .job-capability-block {
@@ -5702,7 +5769,50 @@ h3 { font-size: 20px; }
 
   #jobs .section-heading p:last-child {
     margin-top: 7px;
+    font-size: 15px;
+  }
+
+  .job-structure-meta strong {
+    font-size: 48px;
+  }
+
+  .job-structure-meta span,
+  .job-structure-meta em {
+    font-size: 13px;
+  }
+
+  .job-structure-meta small {
+    font-size: 10px;
+  }
+
+  .job-structure-step strong {
+    font-size: 15px;
+  }
+
+  .job-structure-step p {
+    font-size: 12px;
+  }
+
+  .job-evidence-panel {
+    padding: 17px 18px;
+  }
+
+  .job-evidence-panel > header h3 {
+    font-size: 21px;
+  }
+
+  .job-evidence-panel > header p,
+  .job-role-label span {
     font-size: 14px;
+  }
+
+  .job-task-row span {
+    font-size: 13px;
+  }
+
+  .job-evidence-note {
+    min-height: 42px;
+    font-size: 13px;
   }
 }
 

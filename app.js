@@ -872,6 +872,8 @@ function renderJobSignals(target = qs("#job-signal-root")) {
 
   const meta = data["元数据"];
   const roleMax = Math.max(...data["新岗位类型"].map((item) => Number(item["样本数"]) || 0), 1);
+  const toolMax = Math.max(...data["工具提及"].map((item) => Number(item["提及岗位数"]) || 0), 1);
+  const aiRelatedTotal = Number(meta["AI相关岗位数"]) || 1;
   const percent = (value) => Math.round(Number(value || 0) * 100);
 
   const structureSteps = data["岗位结构"].map((item, index) =>
@@ -895,7 +897,7 @@ function renderJobSignals(target = qs("#job-signal-root")) {
     const rows = items.map((item) => {
       const value = percent(item["提及率"]);
       return '<div class="job-task-row">' +
-        '<div><span>' + escapeHtml(item["任务类别"]) + '</span><strong>' + escapeHtml(item["提及岗位数"]) + '/41</strong></div>' +
+        '<div><span>' + escapeHtml(item["任务类别"]) + '</span><strong>' + escapeHtml(item["提及岗位数"]) + '/' + aiRelatedTotal + '</strong></div>' +
         '<div class="job-task-track"><i style="width:' + value + '%"></i></div>' +
       '</div>';
     }).join("");
@@ -905,15 +907,15 @@ function renderJobSignals(target = qs("#job-signal-root")) {
     '</section>';
   }).join("");
 
-  const salaryMax = 15;
-  const salaryRows = data["薪资比较"].map((item) => {
+  const salaryMax = Math.max(...data["薪资比较"].map((item) => Number(item["P75"]) || 0), 15) * 1.05;
+  const salaryRows = data["薪资比较"].map((item, index) => {
     const p25 = Number(item["P25"]);
     const median = Number(item["中位数"]);
     const p75 = Number(item["P75"]);
     const left = p25 / salaryMax * 100;
     const width = (p75 - p25) / salaryMax * 100;
     const marker = (median - p25) / Math.max(p75 - p25, 0.01) * 100;
-    return '<div class="job-salary-row">' +
+    return '<div class="job-salary-row salary-row-' + (index + 1) + '">' +
       '<div class="job-salary-label"><strong>' + escapeHtml(item["岗位组"]) + '</strong><span>n=' + escapeHtml(item["可比月薪样本数"]) + '</span></div>' +
       '<div class="job-salary-scale">' +
         '<i class="job-salary-range" style="left:' + left.toFixed(2) + '%;width:' + width.toFixed(2) + '%"><b style="left:' + marker.toFixed(2) + '%"></b></i>' +
@@ -922,46 +924,47 @@ function renderJobSignals(target = qs("#job-signal-root")) {
     '</div>';
   }).join("");
 
-  const capabilityRows = data["能力矩阵"].map((item) => {
-    const aiValue = percent(item["AI相关岗位"]);
-    const traditionalValue = percent(item["传统岗位基线"]);
-    return '<div class="job-capability-row">' +
-      '<span>' + escapeHtml(item["能力类别"]) + '</span>' +
-      '<div class="job-capability-pair">' +
-        '<i class="capability-ai" style="width:' + aiValue + '%"><b>' + aiValue + '%</b></i>' +
-        '<i class="capability-traditional" style="width:' + traditionalValue + '%"><b>' + traditionalValue + '%</b></i>' +
-      '</div>' +
+  const toolRows = data["工具提及"].map((item) => {
+    const count = Number(item["提及岗位数"]) || 0;
+    const width = Math.max(4, Math.round(count / toolMax * 100));
+    return '<div class="job-tool-row">' +
+      '<span>' + escapeHtml(item["工具"]) + '</span>' +
+      '<div class="job-tool-track"><i style="width:' + width + '%"></i><b>' + count + '</b></div>' +
     '</div>';
   }).join("");
 
+  const platformLine = data["平台分布"].map((item) =>
+    escapeHtml(item["平台"]) + ' ' + escapeHtml(item["样本数"])
+  ).join(' · ');
+
   target.innerHTML = '<div class="job-evidence-layout">' +
     '<section class="job-structure-band" aria-label="当前样本中的岗位结构">' +
-      '<div class="job-structure-meta"><strong>' + escapeHtml(meta["样本数"]) + '</strong><div><span>条公开岗位样本</span><em>' + escapeHtml(meta["采样时间"]) + ' 采集</em></div></div>' +
+      '<div class="job-structure-meta"><strong>' + escapeHtml(meta["样本数"]) + '</strong><div><span>条国内公开岗位</span><em>' + escapeHtml(meta["采样时间"]) + ' 采集</em><small>' + platformLine + '</small></div></div>' +
       '<div class="job-structure-spectrum">' + structureSteps + '</div>' +
     '</section>' +
     '<div class="job-evidence-grid">' +
       '<article class="job-evidence-panel job-role-panel">' +
-        '<header><span>01 · 岗位名称</span><h3>新岗位类型已经出现</h3><p>仅统计38条岗位名称直接出现AI或AIGC的样本。</p></header>' +
+        '<header><span>01 · 岗位名称</span><h3>新岗位类型已经出现</h3><p>以下分类来自' + escapeHtml(meta["显性AI岗位数"]) + '条岗位名称直接出现AI或AIGC的样本。</p></header>' +
         '<div class="job-role-bars">' + roleBars + '</div>' +
       '</article>' +
       '<article class="job-evidence-panel job-task-panel">' +
-        '<header><span>02 · 责任迁移</span><h3>工具接手生成，人继续判断</h3><p>41条AI相关岗位采用多标签编码，同一岗位可以命中多个任务。</p></header>' +
+        '<header><span>02 · 责任迁移</span><h3>工具接手生成，人继续判断</h3><p>' + escapeHtml(meta["AI相关岗位数"]) + '条AI相关岗位采用多标签编码，同一岗位可以命中多个任务。</p></header>' +
         '<div class="job-task-columns">' + taskColumns + '</div>' +
       '</article>' +
       '<article class="job-evidence-panel job-market-panel">' +
-        '<header><span>03 · 薪资与能力</span><h3>岗位要求正在重新组合</h3></header>' +
+        '<header><span>03 · 薪资与工具</span><h3>生成工具进入传统制作链</h3></header>' +
         '<section class="job-salary-block">' +
           '<div class="job-subheading"><strong>月薪中点分布</strong><span>P25 · 中位数 · P75，单位：千元/月</span></div>' +
           salaryRows +
-          '<p class="job-salary-caveat">薪资未控制城市、经验和岗位层级，只能描述当前样本。</p>' +
+          '<p class="job-salary-caveat">薪资未控制城市、经验和岗位层级，不能解释为AI技能的因果溢价。</p>' +
         '</section>' +
-        '<section class="job-capability-block">' +
-          '<div class="job-subheading"><strong>能力提及率</strong><span><i class="legend-ai"></i>AI相关岗位 <i class="legend-traditional"></i>传统岗位</span></div>' +
-          capabilityRows +
+        '<section class="job-tool-block">' +
+          '<div class="job-subheading"><strong>高频工具组合</strong><span>提及岗位数</span></div>' +
+          toolRows +
         '</section>' +
       '</article>' +
     '</div>' +
-    '<footer class="job-evidence-note"><strong>证据边界</strong><span>这些数据能说明AI已经进入企业招聘语言。</span><span>样本不能推断行业占比、薪资因果或被替代的人工岗位数。</span></footer>' +
+    '<footer class="job-evidence-note"><strong>证据边界</strong><span>8份行业报告和7条海外官方岗位用于背景参照。</span><span>本模块能说明AI已经进入企业招聘语言，不能推断行业占比、薪资因果或岗位替代数量。</span></footer>' +
   '</div>';
 }
 
