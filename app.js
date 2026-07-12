@@ -1064,6 +1064,179 @@ function renderJobSignals(target = qs("#job-signal-root")) {
   '</div>';
 }
 
+function formatStudyNumber(value, digits = 2) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return "-";
+  return number.toLocaleString("zh-CN", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: digits
+  });
+}
+
+function formatSignedStudyNumber(value, digits = 2) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return "-";
+  const sign = number > 0 ? "+" : "";
+  return sign + formatStudyNumber(number, digits);
+}
+
+function renderAdoptionRow(item) {
+  const width = Math.max(2, Math.min(100, Number(item.value) || 0));
+  return '<div class="adoption-row">' +
+    '<div><span>' + escapeHtml(item.label) + '</span><small>' + escapeHtml(item.note) + '</small></div>' +
+    '<div class="adoption-track"><i style="width:' + width + '%"></i></div>' +
+    '<strong>' + escapeHtml(item.display) + '</strong>' +
+  '</div>';
+}
+
+function renderStudyOutcome(row) {
+  const relative = row.baseline ? row.itt / row.baseline * 100 : 0;
+  const width = Math.max(1.5, Math.min(48, Math.abs(relative) / 20 * 48));
+  const direction = relative < 0 ? "is-negative" : "is-positive";
+  const status = row.significant ? "检测到显著变化" : "未检测到显著变化";
+  return '<div class="study-outcome-row ' + direction + ' ' + (row.significant ? "is-detected" : "is-undetected") + '" title="基期均值：' + escapeHtml(formatStudyNumber(row.baseline)) + ' ' + escapeHtml(row.unit) + '；ITT标准误：' + escapeHtml(formatStudyNumber(row.ittSE, 3)) + '">' +
+    '<div class="study-outcome-label"><span>' + escapeHtml(row.metric) + '</span><small>' + escapeHtml(status) + '</small></div>' +
+    '<div class="study-effect-axis"><b></b><i style="--effect-width:' + width + '%"></i></div>' +
+    '<div class="study-outcome-value"><strong>' + escapeHtml(formatSignedStudyNumber(row.itt, 3)) + '</strong><small>' + escapeHtml(row.unit) + '</small></div>' +
+  '</div>';
+}
+
+function renderOutcomeGroups(rows) {
+  const groups = ["邮件", "会议", "文档", "总体"];
+  return groups.map((group) => {
+    const groupRows = rows.filter((row) => row.group === group);
+    const detected = groupRows.filter((row) => row.significant).length;
+    return '<section class="study-outcome-group group-' + escapeHtml(group) + '">' +
+      '<header><div><span>' + escapeHtml(group) + '</span><strong>' + groupRows.length + '项</strong></div><small>显著 ' + detected + ' 项</small></header>' +
+      '<div>' + groupRows.map(renderStudyOutcome).join("") + '</div>' +
+    '</section>';
+  }).join("");
+}
+
+function renderStudyTable(rows) {
+  const body = rows.map((row) => '<tr>' +
+    '<td>' + escapeHtml(row.group) + '</td>' +
+    '<td>' + escapeHtml(row.metric) + '</td>' +
+    '<td>' + escapeHtml(formatStudyNumber(row.baseline)) + '</td>' +
+    '<td>' + escapeHtml(formatSignedStudyNumber(row.itt, 3)) + '</td>' +
+    '<td>' + escapeHtml(formatStudyNumber(row.ittSE, 3)) + '</td>' +
+    '<td>' + escapeHtml(formatSignedStudyNumber(row.late, 3)) + '</td>' +
+    '<td>' + escapeHtml(formatStudyNumber(row.lateSE, 3)) + '</td>' +
+    '<td>' + escapeHtml(formatStudyNumber(row.workers, 0)) + '</td>' +
+    '<td>' + escapeHtml(formatStudyNumber(row.observations, 0)) + '</td>' +
+    '<td>' + (row.significant ? '是' : '否') + '</td>' +
+  '</tr>').join("");
+  return '<div class="study-table-scroll"><table class="study-data-table">' +
+    '<thead><tr><th>类别</th><th>指标</th><th>基期均值</th><th>ITT</th><th>标准误</th><th>使用者效应</th><th>标准误</th><th>人数</th><th>观测数</th><th>显著</th></tr></thead>' +
+    '<tbody>' + body + '</tbody>' +
+  '</table></div>';
+}
+
+function renderStructureGap(target = qs("#structure-gap-root")) {
+  const data = window.AI_WORK_TRANSITION_DATA;
+  if (!target || !data) return;
+  const rows = data.mainOutcomes;
+  const detected = rows.filter((row) => row.significant).length;
+  const undetected = rows.length - detected;
+  const structuralSignals = data.structuralSignals.slice(0, 4).map((item) => '<div class="compact-structure-row">' +
+    '<span>' + escapeHtml(item.label) + '</span>' +
+    '<strong>未检测到显著变化</strong>' +
+  '</div>').join("");
+  const sources = data.sources.map((source) => '<li><a href="' + escapeHtml(source.url) + '" target="_blank" rel="noreferrer">' + escapeHtml(source.name) + '</a><span>' + escapeHtml(source.detail) + '</span><small>' + escapeHtml(source.note) + '</small></li>').join("");
+
+  target.innerHTML = '<div class="structure-gap-dashboard compact-transition-dashboard">' +
+    '<section class="study-frame-strip" aria-label="研究样本与设计">' +
+      '<div><strong>' + escapeHtml(formatStudyNumber(data.study.firms, 0)) + '</strong><span>家企业</span></div>' +
+      '<div><strong>' + escapeHtml(formatStudyNumber(data.study.workers, 0)) + '</strong><span>名知识工作者</span></div>' +
+      '<div><strong>' + escapeHtml(formatStudyNumber(data.study.treatedWorkers, 0)) + '</strong><span>名处理组成员</span></div>' +
+      '<div><strong>' + escapeHtml(formatStudyNumber(data.study.months, 0)) + '</strong><span>个月实验</span></div>' +
+    '</section>' +
+    '<div class="study-focus-grid">' +
+      '<article class="study-focus-panel study-use-panel">' +
+        '<header><span>01 · 实际使用</span><h3>获得工具，不等于持续使用</h3></header>' +
+        '<div class="study-use-hero"><strong>80%</strong><p>第4至6个月至少使用过一次</p></div>' +
+        '<div class="study-use-bars">' +
+          '<div><span>每周平均使用率</span><i><b style="width:39%"></b></i><strong>略低于40%</strong></div>' +
+          '<div><span>每周都使用</span><i><b style="width:5%"></b></i><strong>5%</strong></div>' +
+          '<div><span>后半程从未使用</span><i><b style="width:20%"></b></i><strong>20%</strong></div>' +
+        '</div>' +
+      '</article>' +
+      '<article class="study-focus-panel study-gain-panel">' +
+        '<header><span>02 · 局部效率</span><h3>明确变化集中在邮件和时间安排</h3></header>' +
+        '<div class="study-gain-list">' +
+          '<div><span>邮件使用时间</span><strong>-1.37<small>小时/周</small></strong><p>约为基期均值的 -12%；实际使用者为 -2.03 小时/周</p></div>' +
+          '<div><span>非工作时段软件使用</span><strong>-0.25<small>小时/周</small></strong><p>约为基期均值的 -9%</p></div>' +
+          '<div><span>无邮件干扰时段</span><strong>+1.48<small>小时/周</small></strong><p>实际使用者为 +2.20 小时/周</p></div>' +
+        '</div>' +
+      '</article>' +
+      '<article class="study-focus-panel study-structure-focus">' +
+        '<header><span>03 · 工作结构</span><h3>核心任务结构没有明显改变</h3></header>' +
+        '<div class="compact-structure-summary"><strong>4 / 4</strong><span>项核心结构指标未检测到显著变化</span></div>' +
+        '<div class="compact-structure-list">' + structuralSignals + '</div>' +
+        '<div class="compact-team-signal"><strong>团队旁证</strong><span>同事效应的18项指标中，仅1项显著</span><small>高覆盖组的同事平均覆盖率为39%，团队效应仍需更高覆盖实验验证。</small></div>' +
+      '</article>' +
+    '</div>' +
+    '<section class="study-transition-logic compact-transition-logic">' +
+      '<div class="finding-known"><span>K · 论文直接结果</span><p>' + escapeHtml(data.transition.directFinding) + '</p></div>' +
+      '<i aria-hidden="true">→</i>' +
+      '<div class="finding-inferred"><span>I · 本项目推论</span><p>' + escapeHtml(data.transition.inference) + '</p></div>' +
+    '</section>' +
+    '<aside class="study-boundary-note compact-boundary-note"><strong>证据边界</strong><p>' + escapeHtml(data.transition.boundary) + '</p></aside>' +
+    '<div class="study-disclosure-row">' +
+      '<details class="study-full-data"><summary>查看表2的18项完整数据：' + detected + '项显著，' + undetected + '项未显著</summary>' + renderStudyTable(rows) + '</details>' +
+      '<details class="study-source-notes"><summary>查看论文来源与版本说明</summary><ul>' + sources + '</ul></details>' +
+    '</div>' +
+  '</div>';
+  const dashboard = qs(".structure-gap-dashboard", target);
+  if (dashboard && "IntersectionObserver" in window) {
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries[0]?.isIntersecting) return;
+      dashboard.classList.add("is-visible");
+      observer.disconnect();
+    }, { threshold: 0.18 });
+    observer.observe(dashboard);
+  } else if (dashboard) {
+    dashboard.classList.add("is-visible");
+  }
+}
+
+function bindT6Questions(target) {
+  qsa(".t6-question-card", target).forEach((button) => {
+    button.addEventListener("click", () => {
+      qsa(".t6-question-card", target).forEach((item) => item.classList.remove("is-active"));
+      button.classList.add("is-active");
+      const detail = qs("#t6-active-question", target);
+      if (detail) detail.textContent = button.dataset.question || "";
+    });
+  });
+}
+
+function renderT6(target = qs("#t6-root")) {
+  const data = window.AI_WORK_TRANSITION_DATA;
+  if (!target || !data) return;
+  const t6 = data.t6;
+  const positions = ["q1", "q2", "q3", "q4", "q5"];
+  const questions = t6.questions.map((item, index) => '<button type="button" class="t6-question-card ' + positions[index] + '" data-question="' + escapeHtml(item.text) + '">' +
+    '<span>0' + (index + 1) + '</span><strong>' + escapeHtml(item.name) + '</strong><small>' + escapeHtml(item.text) + '</small>' +
+  '</button>').join("");
+  const david = data.sources[1];
+
+  target.innerHTML = '<article class="t6-shell">' +
+    '<header class="t6-header">' +
+      '<div><p class="eyebrow">未来阶段 · 尚未形成稳定答案</p><h2>' + escapeHtml(t6.id) + ' · ' + escapeHtml(t6.name) + '</h2><span>' + escapeHtml(t6.years) + '</span></div>' +
+      '<p>前一页说明了局部工具接入与生产结构重构之间的差距。T6不预测唯一结果，它把下一阶段必须回答的问题公开出来。</p>' +
+    '</header>' +
+    '<div class="t6-question-map">' +
+      questions +
+      '<div class="t6-question-core"><span>?</span><strong>' + escapeHtml(t6.question) + '</strong><small>从局部效率走向系统生产力</small></div>' +
+      '<div class="t6-connector connector-a"></div><div class="t6-connector connector-b"></div><div class="t6-connector connector-c"></div><div class="t6-connector connector-d"></div>' +
+    '</div>' +
+    '<div class="t6-active-question"><span>点击问题查看</span><p id="t6-active-question">流程、岗位、协作、管理与责任需要一起重新设计。</p></div>' +
+    '<footer class="t6-history-note"><span>历史参照</span><p>Paul A. David在《The Dynamo and the Computer》中指出，通用技术的生产力回报依赖组织、技能和流程等互补调整。该历史类比用于提出问题，不用于预测动画行业的确定结果。</p><a href="' + escapeHtml(david.url) + '" target="_blank" rel="noreferrer">查看文献记录</a></footer>' +
+  '</article>';
+  bindT6Questions(target);
+}
+
 function renderHome() {
   qs("#home-title").textContent = DATA.home["主标题"];
   qs("#home-subtitle").textContent = DATA.home["副标题"];
@@ -1090,6 +1263,8 @@ function renderIndexPage() {
   renderIndexTimelineState();
   renderAi();
   renderJobSignals();
+  renderStructureGap();
+  renderT6();
   bindCaseModalControls();
   bindMatrixDrawerControls();
   alignInitialHash();
