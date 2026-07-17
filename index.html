@@ -3,164 +3,150 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>从手工媒材到人机协同｜中国动画生产方式可视化</title>
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=t6-data-3">
+  <meta name="color-scheme" content="light">
+  <title>动画行业发展｜Figma 成帧交互版</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body data-page="index">
-  <header class="site-nav" aria-label="页面导航">
-    <a class="brand-mark" href="#top">动画生产方式可视化</a>
-    <nav>
-      <a href="#top">首页</a>
-      <a href="#timeline">技术阶段</a>
-      <a href="#migration">劳动迁移</a>
-      <a href="#ai">AI八环节</a>
-      <a href="#jobs">岗位信号</a>
-    </nav>
-  </header>
+<body data-level="works">
+  <main class="figma-page" aria-label="动画行业发展信息可视化长页">
+    <img class="figma-frame" src="assets/figma/frame-19.png" alt="项目封面与研究说明">
+    <img class="figma-frame" src="assets/figma/frame-22.png" alt="研究问题">
 
-  <main id="top">
-    <section class="hero-section">
-      <div class="hero-copy">
-        <p class="eyebrow">技术变迁下的中国动画生产方式</p>
-        <h1 id="home-title"></h1>
-        <p class="subtitle" id="home-subtitle"></p>
-        <div class="hero-claim">
-          <strong>研究问题</strong>
-          <span id="home-question"></span>
-        </div>
-        <p class="hero-conclusion" id="home-conclusion"></p>
-        <div class="hero-actions">
-          <a class="button primary" href="#timeline">从技术阶段开始</a>
-          <a class="button ghost" href="#migration">查看劳动迁移主图</a>
-        </div>
-        <div class="reading-spine" aria-label="页面阅读主线">
-          <span>技术与表现</span>
-          <i></i>
-          <span>劳动迁移</span>
-          <i></i>
-          <span>证据展开</span>
-          <i></i>
-          <span>现实旁证</span>
-        </div>
-        <div class="motion-origin" aria-label="运动幻觉的起点">
-          <span>首页引子</span>
-          <strong>运动幻觉的起点</strong>
-          <p id="home-origin"></p>
-        </div>
+    <section class="interactive-frame timeline-frame" id="timeline" aria-label="五个动画工业阶段">
+      <img class="figma-frame" src="assets/figma/frame-28.png" alt="动画工业五阶段时间线与人工智能制作环节">
+
+      <button class="level-hotspot level-hotspot--works is-active" type="button" data-level-target="works" aria-label="切换到 Level 1 代表作品" aria-pressed="true"></button>
+      <button class="level-hotspot level-hotspot--tech" type="button" data-level-target="tech" aria-label="切换到 Level 2 制作技术" aria-pressed="false"></button>
+
+      <div class="stage-components" aria-label="五个时期卡片">
+        <button class="stage-card stage-card--t1 stage-card--orange" type="button" data-stage="t1" aria-label="打开 T1 手工逐格与摄影台生产详情">
+          <span class="stage-card-layer">
+            <span class="stage-card-art" aria-hidden="true"><img src="assets/figma/components/sticky-source.png" alt=""></span>
+            <span class="stage-card-copy">
+              <strong>手工逐格与摄影台生产</strong>
+              <span class="stage-card-time" aria-hidden="true">
+                <span class="stage-time-point"><span class="stage-time-number">1920</span><span class="stage-time-s">s</span></span>
+                <span class="stage-time-line"></span>
+                <span class="stage-time-point"><span class="stage-time-number">1950</span><span class="stage-time-s">s</span></span>
+              </span>
+            </span>
+          </span>
+        </button>
+        <button class="stage-card stage-card--t2 stage-card--yellow" type="button" data-stage="t2" aria-label="打开 T2 手工媒材与美术片工艺详情">
+          <span class="stage-card-layer">
+            <span class="stage-card-art" aria-hidden="true"><img src="assets/figma/components/sticky-source.png" alt=""></span>
+            <span class="stage-card-copy">
+              <strong>手工媒材与美术片工艺</strong>
+              <span class="stage-card-time" aria-hidden="true">
+                <span class="stage-time-point"><span class="stage-time-number">1950</span><span class="stage-time-s">s</span></span>
+                <span class="stage-time-line"></span>
+                <span class="stage-time-point"><span class="stage-time-number">1980</span><span class="stage-time-s">s</span></span>
+              </span>
+            </span>
+          </span>
+        </button>
+        <button class="stage-card stage-card--t3 stage-card--orange" type="button" data-stage="t3" aria-label="打开 T3 二维数字动画与无纸化制作详情">
+          <span class="stage-card-layer">
+            <span class="stage-card-art" aria-hidden="true"><img src="assets/figma/components/sticky-source.png" alt=""></span>
+            <span class="stage-card-copy">
+              <strong>二维数字动画与无纸化制作</strong>
+              <span class="stage-card-time" aria-hidden="true">
+                <span class="stage-time-point"><span class="stage-time-number">1990</span><span class="stage-time-s">s</span></span>
+                <span class="stage-time-line"></span>
+                <span class="stage-time-now">NOW</span>
+              </span>
+            </span>
+          </span>
+        </button>
+        <button class="stage-card stage-card--t4 stage-card--yellow" type="button" data-stage="t4" aria-label="打开 T4 三维CG与动画工业化详情">
+          <span class="stage-card-layer">
+            <span class="stage-card-art" aria-hidden="true"><img src="assets/figma/components/sticky-source.png" alt=""></span>
+            <span class="stage-card-copy">
+              <strong>三维CG与动画工业化</strong>
+              <span class="stage-card-time" aria-hidden="true">
+                <span class="stage-time-point"><span class="stage-time-number">2015</span></span>
+                <span class="stage-time-line"></span>
+                <span class="stage-time-now">NOW</span>
+              </span>
+            </span>
+          </span>
+        </button>
+        <button class="stage-card stage-card--t5 stage-card--yellow" type="button" data-stage="t5" aria-label="打开 T5 多模态人工智能与人机协同详情">
+          <span class="stage-card-layer">
+            <span class="stage-card-art" aria-hidden="true"><img src="assets/figma/components/sticky-source.png" alt=""></span>
+            <span class="stage-card-copy">
+              <strong>多模态人工智能与人机协同</strong>
+              <span class="stage-card-time" aria-hidden="true">
+                <span class="stage-time-point"><span class="stage-time-number">2023</span></span>
+                <span class="stage-time-line"></span>
+                <span class="stage-time-now">NOW</span>
+              </span>
+            </span>
+          </span>
+        </button>
       </div>
-      <figure class="hero-production-visual" aria-label="动画生产流程观察对象">
-        <img src="assets/现成图片/技术/节点四-三维动画工作流-Autodesk.jpeg" alt="动画制作流程参考图">
-        <figcaption>
-          <span>观察对象</span>
-          <strong>动画技术与生产劳动的双重变化</strong>
-          <p>第一层观察动画怎样被制作和呈现。第二层比较技术接手了什么，以及人的工作重心怎样变化。</p>
-        </figcaption>
-      </figure>
+
+      <div class="ai-components" aria-label="人工智能参与动画制作的八个环节">
+        <button class="image-hotspot ai-component ai-component--script" type="button" data-detail-kind="ai" data-detail-src="assets/figma/details-transparent/ai-script.png" data-detail-alt="人工智能与剧本环节详情" aria-label="打开剧本环节详情"><img src="assets/figma/components/ai-script.png" alt=""></button>
+        <button class="image-hotspot ai-component ai-component--character" type="button" data-detail-kind="ai" data-detail-src="assets/figma/details-transparent/ai-character.png" data-detail-alt="人工智能与角色环节详情" aria-label="打开角色环节详情"><img src="assets/figma/components/ai-character.png" alt=""></button>
+        <button class="image-hotspot ai-component ai-component--music" type="button" data-detail-kind="ai" data-detail-src="assets/figma/details-transparent/ai-music.png" data-detail-alt="人工智能与配乐环节详情" aria-label="打开配乐环节详情"><img src="assets/figma/components/ai-music.png" alt=""></button>
+        <button class="image-hotspot ai-component ai-component--scene" type="button" data-detail-kind="ai" data-detail-src="assets/figma/details-transparent/ai-scene.png" data-detail-alt="人工智能与场景环节详情" aria-label="打开场景环节详情"><img src="assets/figma/components/ai-scene.png" alt=""></button>
+        <button class="image-hotspot ai-component ai-component--post" type="button" data-detail-kind="ai" data-detail-src="assets/figma/details-transparent/ai-post.png" data-detail-alt="人工智能与后期环节详情" aria-label="打开后期环节详情"><img src="assets/figma/components/ai-post.png" alt=""></button>
+        <button class="image-hotspot ai-component ai-component--publicity" type="button" data-detail-kind="ai" data-detail-src="assets/figma/details-transparent/ai-publicity.png" data-detail-alt="人工智能与宣传环节详情" aria-label="打开宣传环节详情"><img src="assets/figma/components/ai-publicity.png" alt=""></button>
+        <button class="image-hotspot ai-component ai-component--motion" type="button" data-detail-kind="ai" data-detail-src="assets/figma/details-transparent/ai-motion.png" data-detail-alt="人工智能与动作环节详情" aria-label="打开动作环节详情"><img src="assets/figma/components/ai-motion.png" alt=""></button>
+        <button class="image-hotspot ai-component ai-component--storyboard" type="button" data-detail-kind="ai" data-detail-src="assets/figma/details-transparent/ai-storyboard.png" data-detail-alt="人工智能与分镜环节详情" aria-label="打开分镜环节详情"><img src="assets/figma/components/ai-storyboard.png" alt=""></button>
+      </div>
     </section>
 
-    <section class="section-panel" id="timeline">
-      <div class="section-heading">
-        <p class="eyebrow">第一层 · 技术阶段与动画表现</p>
-        <h2>动画怎样被制作，又怎样呈现在银幕与屏幕上</h2>
-        <p>这一层只观察技术媒介、生产载体、视觉风格和影像效果。点击节点后，当前阶段会在时间轴内展开。</p>
-        <p class="stage-scope-note">五个节点表示主要技术模式的出现与扩展。不同模式可以重叠并长期并存，后一阶段不代表完全替代前一阶段。</p>
+    <section class="interactive-frame recruitment-overview-frame" aria-label="人工智能能力出现在部分公开招聘要求中">
+      <img class="figma-frame" src="assets/figma/frame-33.png" alt="人工智能招聘要求数量">
+      <div class="recruitment-overview-copy">
+        <span class="recruitment-overview-title recruitment-overview-title--baseline">传统岗位基线：</span>
+        <span class="recruitment-overview-title recruitment-overview-title--hybrid">传统名称 + AI能力：</span>
+        <span class="recruitment-overview-title recruitment-overview-title--explicit">显性AI/AIGC岗位：</span>
+
+        <span class="recruitment-overview-note recruitment-overview-note--baseline">岗位名称和主要职责仍以传统<br>二、三维、剪辑或后期流程为主</span>
+        <span class="recruitment-overview-note recruitment-overview-note--hybrid">岗位名称保持传统称呼，但职责<br>或工具要求已经出现AI能力</span>
+        <span class="recruitment-overview-note recruitment-overview-note--explicit">名称直接出现AIGC或人工智能</span>
       </div>
-      <div class="timeline-layout">
-        <div class="timeline-track" id="stage-timeline-root"></div>
+    </section>
+    <section class="interactive-frame recruitment-frame" aria-label="人工智能能力对应的招聘岗位名称分布">
+      <img class="figma-frame" src="assets/figma/frame-35.png" alt="人工智能岗位名称分布">
+      <div class="recruitment-labels">
+        <span>AI动画与生成制作</span>
+        <span>AI漫画与短剧制作</span>
+        <span>AI剪辑与后期</span>
+        <span>AI分镜与视觉设计</span>
+        <span>AI导演制片与管理</span>
+      </div>
+    </section>
+    <section class="interactive-frame salary-frame" aria-label="责任迁移与薪资结构">
+      <img class="figma-frame" src="assets/figma/frame-41.png" alt="责任迁移与薪资结构">
+      <div class="salary-high-correction" aria-label="3年以上经验门槛：显性AI岗位15.50K，传统名称加AI能力20.00K，传统岗位基线20.00K">
+        <span class="salary-high-value salary-high-value--explicit">15.50K</span>
+        <span class="salary-high-value salary-high-value--hybrid">20.00K</span>
+        <span class="salary-high-value salary-high-value--baseline">20.00K</span>
       </div>
     </section>
 
-    <section class="section-panel migration-zone" id="migration">
-      <div class="section-heading">
-        <p class="eyebrow">第二层 · 劳动迁移与证据展开</p>
-        <h2>技术接手了什么？人转向了什么？</h2>
-        <p>先比较五个阶段的劳动变化，再查看当前阶段八个制作环节的编码依据。图中只表示劳动内容的变化，不表示精确人数、工时或替代比例。</p>
-      </div>
-      <div class="migration-view-switch" aria-label="劳动迁移查看方式">
-        <button type="button" data-migration-view="overview" aria-pressed="true">五阶段总览</button>
-        <button type="button" data-migration-view="evidence" aria-pressed="false">当前阶段证据</button>
-      </div>
-      <div id="labor-migration-root"></div>
-      <div id="migration-evidence-root" hidden></div>
+    <section class="interactive-frame question-frame" id="questions" aria-label="未来与五类重构问题">
+      <img class="figma-frame" src="assets/figma/frame-42.png" alt="未来与五类重构问题">
+      <button class="image-hotspot question-component question-component--flow" type="button" data-detail-kind="question" data-detail-src="assets/figma/details-transparent/question-flow.png" data-detail-alt="流程重构详情" aria-label="打开流程重构详情"><img src="assets/figma/components/ticket-flow.png" alt=""><span class="ticket-label">流程重构</span></button>
+      <button class="image-hotspot question-component question-component--job" type="button" data-detail-kind="question" data-detail-src="assets/figma/details-transparent/question-job.png" data-detail-alt="岗位重构详情" aria-label="打开岗位重构详情"><img src="assets/figma/components/ticket-job.png" alt=""><span class="ticket-label">岗位重构</span></button>
+      <button class="image-hotspot question-component question-component--collab" type="button" data-detail-kind="question" data-detail-src="assets/figma/details-transparent/question-collab.png" data-detail-alt="协作重构详情" aria-label="打开协作重构详情"><img src="assets/figma/components/ticket-collab.png" alt=""><span class="ticket-label">协作重构</span></button>
+      <button class="image-hotspot question-component question-component--management" type="button" data-detail-kind="question" data-detail-src="assets/figma/details-transparent/question-management.png" data-detail-alt="管理重构详情" aria-label="打开管理重构详情"><img src="assets/figma/components/ticket-management.png" alt=""><span class="ticket-label">管理重构</span></button>
+      <button class="image-hotspot question-component question-component--responsibility" type="button" data-detail-kind="question" data-detail-src="assets/figma/details-transparent/question-responsibility.png" data-detail-alt="责任重构详情" aria-label="打开责任重构详情"><img src="assets/figma/components/ticket-responsibility.png" alt=""><span class="ticket-label">责任重构</span></button>
     </section>
-
-    <section class="section-panel ai-zone" id="ai">
-      <div class="section-heading compact-heading">
-        <p class="eyebrow">劳动迁移的最新阶段</p>
-        <h2>AI进入八个动画制作环节</h2>
-        <p>本项目使用统一规则编码五个阶段。进入AI阶段后，现有资料显示技术可以介入剧本、分镜、角色、场景、动作、声音、后期和宣发等环节。人工仍需负责筛选、修正、风格控制和最终判断。</p>
-      </div>
-      <div class="metric-overview">
-        <div>
-          <span class="metric-number">8 / 8</span>
-          <strong>研究编码中的AI流程覆盖率：100%</strong>
-          <p>该指标表示AI对动画制作流程的可介入范围。它不等于AI替代率、自动化比例或市场占比。</p>
-        </div>
-        <div>
-          <span class="metric-number">3.25 / 5</span>
-          <strong>研究编码中的平均影响程度</strong>
-          <p>多数环节仍处于辅助、协同和人工修正阶段。</p>
-        </div>
-      </div>
-      <p class="metric-method-note">以上数值是基于本项目统一评分规则的研究编码结果，不是动画行业统计值。</p>
-      <div class="ai-grid" id="ai-grid"></div>
-    </section>
-
-    <section class="section-panel job-signal-zone" id="jobs">
-      <div class="section-heading">
-        <p class="eyebrow">现实旁证 · 301条国内公开招聘便利样本</p>
-        <h2>AI能力已经出现在部分公开招聘要求中</h2>
-        <p>本项目按固定关键词和固定页数采集301条样本，其中229条属于核心动画与视听生产。该样本用于观察企业招聘语言和能力组合，不代表行业招聘规模、岗位占比或总体薪资水平。</p>
-      </div>
-      <div id="job-signal-root"></div>
-    </section>
-
-    <section class="section-panel structure-gap-zone" id="structure-gap">
-      <div class="section-heading structure-gap-heading">
-        <p class="eyebrow">从T5到未来 · 2025年跨企业实验</p>
-        <h2>局部时间节省已经出现，工作结构改变了吗？</h2>
-        <p>这一页从论文表2的18项结果中筛选与转折最相关的数据。完整结果保留在展开区。研究对象是跨行业知识工作者，不是动画行业样本。</p>
-      </div>
-      <div id="structure-gap-root"></div>
-    </section>
-
-    <section class="section-panel t6-zone" id="t6">
-      <div id="t6-root"></div>
-    </section>
-
   </main>
 
-  <footer class="page-footer">
-    <p>本页面用于展示技术变迁如何改变中国动画生产流程。案例数据、研究编码与图片均可在对应详情中查看来源。</p>
-  </footer>
-
-  <div class="case-modal" id="case-modal" hidden>
-    <div class="case-modal-backdrop" data-close-case></div>
-    <article class="case-modal-panel" role="dialog" aria-modal="true" aria-labelledby="case-modal-title">
-      <button class="case-modal-close" type="button" data-close-case aria-label="关闭案例介绍">×</button>
-      <div id="case-modal-content"></div>
-    </article>
+  <div class="detail-overlay" id="detail-overlay" hidden>
+    <button class="detail-backdrop" type="button" aria-label="关闭详情"></button>
+    <section class="detail-panel" role="dialog" aria-modal="true" aria-label="图片详情">
+      <button class="detail-close" type="button" aria-label="关闭详情">×</button>
+      <img id="detail-image" alt="">
+    </section>
   </div>
 
-  <aside class="matrix-detail-drawer" id="matrix-detail-drawer" aria-hidden="true">
-    <button class="matrix-drawer-backdrop" type="button" data-close-matrix-drawer aria-label="关闭制作环节详情"></button>
-    <article class="matrix-drawer-panel" role="dialog" aria-modal="true" aria-labelledby="matrix-drawer-title">
-      <header class="matrix-drawer-header">
-        <div>
-          <p id="matrix-drawer-group"></p>
-          <h2 id="matrix-drawer-title"></h2>
-        </div>
-        <button class="matrix-drawer-close" type="button" data-close-matrix-drawer aria-label="关闭制作环节详情">×</button>
-      </header>
-      <div id="matrix-drawer-content"></div>
-    </article>
-  </aside>
-
-  <script src="matrix-data.js?v=evidence-2"></script>
-  <script src="data.js?v=evidence-2"></script>
-  <script src="job-data.js?v=evidence-2"></script>
-  <script src="transition-data.js?v=t6-data-3"></script>
-  <script src="app.js?v=t6-data-3"></script>
+  <script src="app.js"></script>
 </body>
 </html>
